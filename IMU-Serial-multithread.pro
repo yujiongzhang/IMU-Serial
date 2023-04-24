@@ -20,12 +20,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     crc8_crc16.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    myqdebug.cpp \
+    myserial.cpp \
+    recodefile.cpp
 
 HEADERS += \
     crc8_crc16.h \
     mainwindow.h \
-    msg.h
+    msg.h \
+    myqdebug.h \
+    myserial.h \
+    recodefile.h
 
 FORMS += \
     mainwindow.ui
