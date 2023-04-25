@@ -6,6 +6,8 @@
 #include "msg.h"
 #include "myserial.h"
 #include "recodefile.h"
+#include "startplot.h"
+#include"imualgorithms.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -33,12 +35,18 @@ private slots:
 
     void on_recodeOFF_clicked();
 
+    void on_startplotON_clicked();
+
 private:
     Ui::MainWindow *ui;
     recodeFile *myrecode;
 
     mySerial *myserial;
     QThread *t1;
+
+    IMUAlgorithms *myImuAlgorithms;
+
+    startPlot * my_plot;
 
 
 

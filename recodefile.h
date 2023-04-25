@@ -13,7 +13,7 @@ public:
     explicit recodeFile(QObject *parent = nullptr);
     ~recodeFile();
 
-    void writeRecode(IMU_Msg _imu_msg);
+    void writeRecode(IMU_Euler_Msg _imu_euler_msg);
 
 
 signals:

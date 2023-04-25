@@ -101,6 +101,28 @@ struct IMU_Msg{
 
 };
 
+struct IMU_Euler_Msg{
+
+    float accX;
+    float accY;
+    float accZ;
+
+    float gyroX;
+    float gyroY;
+    float gyroZ;
+
+    float magX;
+    float magY;
+    float magZ;
+
+    float pitch;
+    float roll;
+    float yaw;
+
+    float temprature;
+
+};
+
 
 #pragma pack()      //结束结构体对齐设置
 #endif // MSG_H

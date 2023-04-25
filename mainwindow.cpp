@@ -14,11 +14,17 @@ MainWindow::MainWindow(QWidget *parent)
 
     qRegisterMetaType<serial_set_indexs>("serial_set_indexs");//跨线程的信号和槽的参数传递中,参数的类型是自定义的类型
     qRegisterMetaType<IMU_Msg>("IMU_Msg");//跨线程的信号和槽的参数传递中,参数的类型是自定义的类型
+    qRegisterMetaType<IMU_Euler_Msg>("IMU_Euler_Msg");//跨线程的信号和槽的参数传递中,参数的类型是自定义的类型
 
     uiconfig();
 
     qDebug() << "主线程地址: " << QThread::currentThread();
 
+
+    QThread *t3 = new QThread;
+    myImuAlgorithms = new IMUAlgorithms;
+    myImuAlgorithms->moveToThread(t3);
+    t3->start();
 
     //获取有效的串口
     foreach(const QSerialPortInfo &info,QSerialPortInfo::availablePorts()){
@@ -47,6 +53,8 @@ MainWindow::MainWindow(QWidget *parent)
             t1->start();
 
             connect(this,&MainWindow::s_indexs,myserial,&mySerial::setSerial);
+
+            connect(myserial,&mySerial::s_IMU_msg,myImuAlgorithms,&IMUAlgorithms::CF);
 
             //打开串口
             if(!myserial->ser->open(QIODevice::ReadWrite)){
@@ -149,8 +157,12 @@ void MainWindow::on_pushButton_send_clicked()
 
 void MainWindow::on_recodeON_clicked()
 {
+    QThread *t2 = new QThread;
     myrecode = new recodeFile;
-    connect(myserial,&mySerial::s_IMU_msg,myrecode,&recodeFile::writeRecode);
+    myrecode->moveToThread(t2);
+    t2->start();
+
+    connect(myImuAlgorithms,&IMUAlgorithms::s_imu_euler_msg,myrecode,&recodeFile::writeRecode);
 }
 
 void MainWindow::on_recodeOFF_clicked()
@@ -158,3 +170,12 @@ void MainWindow::on_recodeOFF_clicked()
     myrecode->deleteLater();
 }
 
+
+void MainWindow::on_startplotON_clicked()
+{
+    my_plot = new(startPlot);//打开绘图窗口
+    my_plot->show();
+
+    // 当 my_plot 窗口关闭后，相关的connect也会消失，此处无需disconnect
+    connect(myImuAlgorithms,&IMUAlgorithms::s_imu_euler_msg,my_plot,&startPlot::updateSlot);// 画图窗口处理 接收到的1类消息
+}
