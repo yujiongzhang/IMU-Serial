@@ -47,7 +47,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>温度</string>
+     <string>陀螺仪x3</string>
     </property>
     <widget class="QCustomPlot" name="customPlot2" native="true">
      <property name="geometry">

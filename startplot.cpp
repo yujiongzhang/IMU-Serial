@@ -52,13 +52,17 @@ void startPlot::setupRealtimeDataDemo1(QCustomPlot *customPlot)
 void startPlot::setupRealtimeDataDemo2(QCustomPlot *customPlot)
 {
     customPlot->addGraph(); // 添加图形1
-    customPlot->graph(0)->setPen(QPen(QColor(40, 255, 10)));//设置颜色
+    customPlot->graph(0)->setPen(QPen(QColor(40, 110, 255)));//设置颜色
+    customPlot->addGraph(); // 添加图形2
+    customPlot->graph(1)->setPen(QPen(QColor(255, 40, 110)));//设置颜色
+    customPlot->addGraph(); // 添加图形3
+    customPlot->graph(2)->setPen(QPen(QColor(110, 255, 40)));//设置颜色
 
     QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime); //设置一个 QCPAxisTickerTime 类的共享指针
     timeTicker->setTimeFormat("%h:%m:%s");
     customPlot->xAxis->setTicker(timeTicker);
     customPlot->axisRect()->setupFullAxesBox();
-    customPlot->yAxis->setRange(0,40);
+    customPlot->yAxis->setRange(-30,30);
 
     // 使左轴和下轴将其范围转移到右轴和上轴
     connect(customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), customPlot->xAxis2, SLOT(setRange(QCPRange)));
@@ -102,14 +106,15 @@ void startPlot::addDataSlot1(double _pitch, double _roll, double _yaw)
 
 
 
-void startPlot::addDataSlot2(double mun)
+void startPlot::addDataSlot2(float num1, float num2, float num3)
 {
-    ui->customPlot2->graph(0)->addData(this->t, mun);
-    ui->customPlot2->graph(0)->rescaleValueAxis();//重新缩放值（垂直）轴以适合当前数据
+    ui->customPlot2->graph(0)->addData(this->t, num1);
+    ui->customPlot2->graph(1)->addData(this->t, num2);
+    ui->customPlot2->graph(2)->addData(this->t, num3);
+
     ui->customPlot2->xAxis->setRange(this->t, 10, Qt::AlignRight);// 使键轴范围随数据滚动（恒定范围大小为8）：
     ui->customPlot2->replot();
 }
-
 
 void startPlot::addDataSlot3(float num1, float num2, float num3)
 {
@@ -124,7 +129,7 @@ void startPlot::addDataSlot3(float num1, float num2, float num3)
 void startPlot::updateSlot(IMU_Euler_Msg _imu_euler_msg)
 {
     addDataSlot1(_imu_euler_msg.accX,_imu_euler_msg.accY,_imu_euler_msg.accZ);
-    addDataSlot2(_imu_euler_msg.temprature);
+    addDataSlot2(_imu_euler_msg.gyroX,_imu_euler_msg.gyroY,_imu_euler_msg.gyroZ);
     addDataSlot3(_imu_euler_msg.pitch,_imu_euler_msg.roll,_imu_euler_msg.yaw);
 }
 

@@ -38,6 +38,8 @@ ComplementaryFilter::ComplementaryFilter()
 {
 }
 
+
+
 ComplementaryFilter::~ComplementaryFilter()
 {
 }
