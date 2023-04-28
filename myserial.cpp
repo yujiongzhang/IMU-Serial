@@ -41,6 +41,8 @@ void mySerial::setSerial(serial_set_indexs indexs)
             break;
         case 3:
             this->ser->setBaudRate(921600);
+        case 4:
+            this->ser->setBaudRate(230400);
             break;
     }
 

@@ -120,6 +120,7 @@ void MainWindow::uiconfig()
     ui->comboBox_baudrate->addItem("9600");
     ui->comboBox_baudrate->addItem("19200");
     ui->comboBox_baudrate->addItem("921600");
+    ui->comboBox_baudrate->addItem("230400");
 
     ui->comboBox_databits->addItem("8");
     ui->comboBox_databits->addItem("7");
