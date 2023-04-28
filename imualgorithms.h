@@ -26,9 +26,11 @@ private:
     float gyroY_bias;
     float gyroZ_bias;
 
-    ComplementaryFilter CFfilter;
+    ComplementaryFilter *CFfilter;
 
-    float dlta_time;
+    float accX_pre,accY_pre,accZ_pre,gyroX_pre,gyroY_pre,gyroZ_pre;
+
+    double dlta_time;
 
 };
 

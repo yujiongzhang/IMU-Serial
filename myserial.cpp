@@ -39,6 +39,9 @@ void mySerial::setSerial(serial_set_indexs indexs)
         case 2:
             this->ser->setBaudRate(QSerialPort::Baud19200);
             break;
+        case 3:
+            this->ser->setBaudRate(921600);
+            break;
     }
 
     //设置数据位数
@@ -138,20 +141,20 @@ void mySerial::recv_data_process()
 
                 if(ser->size() < remain_data )//出现分包的问题
                 {
-                    qDebug()<<"选项1";
+//                    qDebug()<<"选项1";
                     ser_read_sate = 1;
-                    qDebug()<<"ser size:"<<ser->size();
+//                    qDebug()<<"ser size:"<<ser->size();
                     int readed_num = ser->size();
                     QByteArray buf = ser->read(readed_num);//读buff中剩余的内容 = ser->read(1);
                     memcpy(data+3,buf.data(),readed_num);
                     remain_data = remain_data - readed_num;//还有这么多要读
-                    qDebug()<<"remain_data"<<remain_data;
-                    qDebug()<<"选项1 over";
+//                    qDebug()<<"remain_data"<<remain_data;
+//                    qDebug()<<"选项1 over";
                     return;
                 }
                 else
                 {
-                    qDebug()<<"选项2";
+//                    qDebug()<<"选项2";
                     QByteArray buf = ser->read(34);
                     memcpy(data+3,buf.data(),34);
 
@@ -161,13 +164,13 @@ void mySerial::recv_data_process()
                     uint16_t CRC16_verify = get_CRC16_check_sum(data,35);
                     uint16_t CRC16_receive = (uint16_t)((uint16_t)(data[35]<<8) |  (uint16_t)data[36]);
 
-                    qDebug()<<"CRC16_receive:"<<CRC16_receive;
-                    qDebug()<<"CRC16_verify:"<<CRC16_verify;
+//                    qDebug()<<"CRC16_receive:"<<CRC16_receive;
+//                    qDebug()<<"CRC16_verify:"<<CRC16_verify;
 
 
                     if(CRC16_receive == CRC16_verify)
                     {
-                        qDebug()<<"顺利接收数据";
+//                        qDebug()<<"顺利接收数据";
                         this->data_process(data);
                     }
 
@@ -181,7 +184,7 @@ void mySerial::recv_data_process()
             }
 
             else {
-                qDebug()<<"function "<<data[1]<<"   datalenth:"<<data[2];
+//                qDebug()<<"function "<<data[1]<<"   datalenth:"<<data[2];
             }
         }
     }
@@ -189,11 +192,11 @@ void mySerial::recv_data_process()
     {
         while(ser->bytesAvailable())
         {
-            qDebug()<<"ser size:"<<ser->size();
-            qDebug()<<"remain_data"<<remain_data;
+//            qDebug()<<"ser size:"<<ser->size();
+//            qDebug()<<"remain_data"<<remain_data;
             if(ser->size()>=remain_data)
             {
-                qDebug()<<"选项3";
+//                qDebug()<<"选项3";
                 QByteArray buf = ser->read(remain_data);//读buff中剩余的内容;
                 memcpy(data+37-remain_data,buf.data(),remain_data);
 
@@ -203,8 +206,8 @@ void mySerial::recv_data_process()
                 uint16_t CRC16_verify = get_CRC16_check_sum(data,35);
                 uint16_t CRC16_receive = (uint16_t)((uint16_t)(data[35]<<8) |  (uint16_t)data[36]);
 
-                qDebug()<<"CRC16_receive:"<<CRC16_receive;
-                qDebug()<<"CRC16_verify:"<<CRC16_verify;
+//                qDebug()<<"CRC16_receive:"<<CRC16_receive;
+//                qDebug()<<"CRC16_verify:"<<CRC16_verify;
 
 //                for(int a= 0; a<40;a++)
 //                {
@@ -213,14 +216,14 @@ void mySerial::recv_data_process()
 
                 if(CRC16_receive == CRC16_verify)
                 {
-                    qDebug()<<"顺利接收数据";
+//                    qDebug()<<"顺利接收数据";
                     this->data_process(data);
                 }
                 memset(data,0,sizeof(data));
 
             }
             else{
-                qDebug()<<"选项4";
+//                qDebug()<<"选项4";
                 int readed_num = ser->size();
                 QByteArray buf = ser->read(readed_num);
                 memcpy(data+37-remain_data,buf.data(),readed_num);

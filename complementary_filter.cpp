@@ -18,8 +18,8 @@ ComplementaryFilter::ComplementaryFilter()
     : gain_acc_(0.01),
       gain_mag_(0.01),
       bias_alpha_(0.01),
-      do_bias_estimation_(false),
-      do_adaptive_gain_(false),
+      do_bias_estimation_(true),
+      do_adaptive_gain_(true),
       initialized_(false),
       steady_state_(false),
       q0_(1),
@@ -178,54 +178,6 @@ void ComplementaryFilter::update(double ax, double ay, double az, double wx,
     normalizeQuaternion(q0_, q1_, q2_, q3_);
 }
 
-void ComplementaryFilter::update(double ax, double ay, double az, double wx,
-                                 double wy, double wz, double mx, double my,
-                                 double mz, double dt)
-{
-    if (!initialized_)
-    {
-        // First time - ignore prediction:
-        getMeasurement(ax, ay, az, mx, my, mz, q0_, q1_, q2_, q3_);
-        initialized_ = true;
-        return;
-    }
-
-    // Bias estimation.
-    if (do_bias_estimation_) updateBiases(ax, ay, az, wx, wy, wz);
-
-    // Prediction.
-    double q0_pred, q1_pred, q2_pred, q3_pred;
-    getPrediction(wx, wy, wz, dt, q0_pred, q1_pred, q2_pred, q3_pred);
-
-    // Correction (from acc):
-    // q_temp = q_pred * [(1-gain) * qI + gain * dq_acc]
-    // where qI = identity quaternion
-    double dq0_acc, dq1_acc, dq2_acc, dq3_acc;
-    getAccCorrection(ax, ay, az, q0_pred, q1_pred, q2_pred, q3_pred, dq0_acc,
-                     dq1_acc, dq2_acc, dq3_acc);
-    double alpha = gain_acc_;
-    if (do_adaptive_gain_) alpha = getAdaptiveGain(gain_acc_, ax, ay, az);
-    scaleQuaternion(alpha, dq0_acc, dq1_acc, dq2_acc, dq3_acc);
-
-    double q0_temp, q1_temp, q2_temp, q3_temp;
-    quaternionMultiplication(q0_pred, q1_pred, q2_pred, q3_pred, dq0_acc,
-                             dq1_acc, dq2_acc, dq3_acc, q0_temp, q1_temp,
-                             q2_temp, q3_temp);
-
-    // Correction (from mag):
-    // q_ = q_temp * [(1-gain) * qI + gain * dq_mag]
-    // where qI = identity quaternion
-    double dq0_mag, dq1_mag, dq2_mag, dq3_mag;
-    getMagCorrection(mx, my, mz, q0_temp, q1_temp, q2_temp, q3_temp, dq0_mag,
-                     dq1_mag, dq2_mag, dq3_mag);
-
-    scaleQuaternion(gain_mag_, dq0_mag, dq1_mag, dq2_mag, dq3_mag);
-
-    quaternionMultiplication(q0_temp, q1_temp, q2_temp, q3_temp, dq0_mag,
-                             dq1_mag, dq2_mag, dq3_mag, q0_, q1_, q2_, q3_);
-
-    normalizeQuaternion(q0_, q1_, q2_, q3_);
-}
 
 bool ComplementaryFilter::checkState(double ax, double ay, double az, double wx,
                                      double wy, double wz) const
