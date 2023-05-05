@@ -21,25 +21,21 @@ MainWindow::MainWindow(QWidget *parent)
     qDebug() << "主线程地址: " << QThread::currentThread();
 
 
-    QThread *t3 = new QThread;
-    myImuAlgorithms = new IMUAlgorithms;
-    myImuAlgorithms->moveToThread(t3);
-    t3->start();
-
     //获取有效的串口
     foreach(const QSerialPortInfo &info,QSerialPortInfo::availablePorts()){
         qDebug()<<info.portName()<<info.description();
 
+        ui->comboBox_port->addItem(info.portName());
 
-        //串口是否空闲
-        QSerialPort serial(info);
-        if(serial.open(QIODevice::ReadWrite)){
-            ui->comboBox_port->addItem(info.portName());
-            serial.close();//关闭串口
-        }
-        else{
-            ui->comboBox_port->addItem(info.portName()+"(被占用)");
-        }
+//        //串口是否空闲
+//        QSerialPort serial(info);
+//        if(serial.open(QIODevice::ReadWrite)){
+//            ui->comboBox_port->addItem(info.portName());
+//            serial.close();//关闭串口
+//        }
+//        else{
+//            ui->comboBox_port->addItem(info.portName()+"(被占用)");
+//        }
     }
 
 
@@ -51,6 +47,13 @@ MainWindow::MainWindow(QWidget *parent)
             myserial = new mySerial(ui->comboBox_port->currentText());
             myserial -> moveToThread(t1);
             t1->start();
+
+            t3 = new QThread;
+            myImuAlgorithms = new IMUAlgorithms;
+            myImuAlgorithms->moveToThread(t3);
+            t3->start();
+
+            myImuAlgorithms->set_dlta_time(ui->imuRateEdit->text().toUInt());
 
             connect(this,&MainWindow::s_indexs,myserial,&mySerial::setSerial);
 
@@ -91,6 +94,10 @@ MainWindow::MainWindow(QWidget *parent)
             myserial->deleteLater();
             t1->deleteLater();
 
+            t3->quit();
+            t3->wait();
+            myImuAlgorithms->deleteLater();
+            t3->deleteLater();
 
             //禁止和使能控件
             ui->comboBox_port->setEnabled(true);
@@ -116,11 +123,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::uiconfig()
 {
+    ui->imuRateEdit->setText("100");
+
     ui->comboBox_baudrate->addItem("115200");
     ui->comboBox_baudrate->addItem("9600");
     ui->comboBox_baudrate->addItem("19200");
     ui->comboBox_baudrate->addItem("921600");
     ui->comboBox_baudrate->addItem("230400");
+    ui->comboBox_baudrate->addItem("460800");
 
     ui->comboBox_databits->addItem("8");
     ui->comboBox_databits->addItem("7");

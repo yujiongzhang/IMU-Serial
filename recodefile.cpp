@@ -7,6 +7,9 @@ recodeFile::recodeFile(QObject *parent) : QObject(parent)
     if(fp == NULL){
         qDebug()<<"file error";
     }
+    else{
+        qDebug()<<"start recode data!";
+    }
 }
 
 recodeFile::~recodeFile()
@@ -17,7 +20,7 @@ recodeFile::~recodeFile()
 
 void recodeFile::writeRecode(IMU_Euler_Msg _imu_euler_msg)
 {
-    qDebug() << "数据记录子线程地址: " << QThread::currentThread();
+//    qDebug() << "数据记录子线程地址: " << QThread::currentThread();
 
     QString imu_euler_msg_to_str;
     imu_euler_msg_to_str.append(QTime::currentTime().toString("HH:mm:ss:zzz"));

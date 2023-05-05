@@ -5,7 +5,6 @@
 IMUAlgorithms::IMUAlgorithms(QObject *parent) : QObject(parent)
 {
     initAlgorithms();//初始化陀螺仪偏差；
-    set_dlta_time(100);
     CFfilter = new ComplementaryFilter;
 }
 

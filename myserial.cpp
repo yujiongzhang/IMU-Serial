@@ -12,6 +12,7 @@ mySerial::mySerial(QObject *parent) : QObject(parent)
 mySerial::mySerial(QString port)
 {
     ser = new QSerialPort(port);
+    ser->setReadBufferSize(1024);
 
     ser_read_sate = 0;
     remain_data = 37;
@@ -41,8 +42,12 @@ void mySerial::setSerial(serial_set_indexs indexs)
             break;
         case 3:
             this->ser->setBaudRate(921600);
+            break;
         case 4:
             this->ser->setBaudRate(230400);
+            break;
+        case 5:
+            this->ser->setBaudRate(460800);
             break;
     }
 

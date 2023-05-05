@@ -43,6 +43,7 @@ private:
 
     mySerial *myserial;
     QThread *t1;
+    QThread *t3;
 
     IMUAlgorithms *myImuAlgorithms;
 
